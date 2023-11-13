@@ -65,8 +65,8 @@ public class ModelTest {
         DataUtil.normalize(data, config.getNormA(), config.getNormB());
         config.setPam(pam);
 
-        config.setTrainSize(1);
-        config.setTestSize(177);
+        config.setTrainSize(50);
+        config.setTestSize(128);
         config.setBorder(0.001);
         config.setDifBorder(0.00001);
 

@@ -33,7 +33,7 @@ public class Model {
 
         FuzzyLayer fuzzyLayer = new FuzzyLayer(15, inputLayer, 2);
 
-        PerceptronLayer firstLayer = new PerceptronLayer(8, new Relu(), new InverseRelu(), fuzzyLayer);
+        PerceptronLayer firstLayer = new PerceptronLayer(5, new Relu(), new InverseRelu(), fuzzyLayer);
         PerceptronLayer secondLayer = new PerceptronLayer(3, new Relu(), new InverseRelu(), firstLayer);
         perceptron.addLayer(firstLayer);
         perceptron.addLayer(secondLayer);
