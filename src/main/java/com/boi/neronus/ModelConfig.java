@@ -19,6 +19,8 @@ public class ModelConfig {
 
     private double nu;
 
+    private int epochs;
+
     private  Map<String, Double> map;
 
     private List<String> pam;
@@ -113,5 +115,13 @@ public class ModelConfig {
 
     public void setPam(List<String> pam) {
         this.pam = pam;
+    }
+
+    public int getEpochs() {
+        return epochs;
+    }
+
+    public void setEpochs(int epochs) {
+        this.epochs = epochs;
     }
 }
