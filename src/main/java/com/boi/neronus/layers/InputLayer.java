@@ -15,7 +15,9 @@ public class InputLayer implements Layer {
     public InputLayer(double[] inputs, int num) {
         neurons = new ArrayList<>(num);
         for (int i = 0; i < num; i++) {
-            neurons.add(NeuronsFactory.createInputNeurone(inputs[i]));
+            InputNeuron in = NeuronsFactory.createInputNeurone(inputs[i]);
+            in.setName(Integer.toString(i));
+            neurons.add(in);
         }
     }
 
@@ -28,5 +30,9 @@ public class InputLayer implements Layer {
     @Override
     public List<InputNeuron> getNeurons() {
         return neurons;
+    }
+
+    public String getName() {
+        return null;
     }
 }

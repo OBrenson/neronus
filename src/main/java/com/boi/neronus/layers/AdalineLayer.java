@@ -47,4 +47,8 @@ public class AdalineLayer implements Layer {
     public List<AdalineNeurone> getNeurons() {
         return neurons;
     }
+
+    public String getName() {
+        return null;
+    }
 }

@@ -41,7 +41,7 @@ public class PerceptronTest {
         config.setPam(pam);
 
         Model model = new Model();
-        model.createAndExecute(config);
+        model.createAndExecute(config, false);
     }
 
     private double[][] readIrisData()  {

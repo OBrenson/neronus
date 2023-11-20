@@ -6,6 +6,8 @@ public class InputNeuron implements Neuron{
 
     private double outputSignal;
 
+    private String name;
+
     public InputNeuron() {
     }
 
@@ -31,5 +33,17 @@ public class InputNeuron implements Neuron{
         for(int i = 0; i < inputs.size(); i++) {
             inputs.get(i).setOutputSignal(data[i]);
         }
+    }
+
+    public double getOutputSignal() {
+        return outputSignal;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

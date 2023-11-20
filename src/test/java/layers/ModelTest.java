@@ -7,7 +7,6 @@ import com.boi.neronus.neurons.exceptions.NoOutputSignal;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
@@ -31,14 +30,14 @@ public class ModelTest {
         config.setData(data);
         config.setNormA(-1);
         config.setNormB(1);
-        config.setTrainSize(79);
-        config.setTestSize(79);
+        config.setTrainSize(50);
+        config.setTestSize(128);
         config.setBorder(0.001);
         config.setDifBorder(0.00001);
-        config.setNu(0.6);
+        config.setNu(0.3);
         config.setAlpha(0.06);
         DataUtil.normalize(data, config.getNormA(), config.getNormB());
-        config.setEpochs(1);
+        config.setEpochs(5);
 
         List<String> pam = new ArrayList<>();
         for(int i = 0; i < 3; i++) {
@@ -47,7 +46,7 @@ public class ModelTest {
         config.setPam(pam);
 
         Model model = new Model();
-        model.createAndExecute(config);
+        System.out.println(model.createAndExecute(config, true));
     }
 
     @Test
@@ -58,6 +57,8 @@ public class ModelTest {
         }
         double[][] data = readWineData();
         DataUtil.shuffle(data, (int)new Date().getTime());
+
+        DataUtil.save(Model.PATH + "prepData", data);
         ModelConfig config = new ModelConfig();
         config.setNormA(-1);
         config.setNormB(1);
@@ -79,7 +80,7 @@ public class ModelTest {
         double bestNu = 0;
         double bestAlpha = 0;
         double bestEpochs = 0;
-        double res = -1;
+        double res = 1;
         for(int epochs = 1; epochs < 6; epochs++) {
             for(double nu = 0.1; nu <= 0.9; nu += nuDelta) {
                 for (double alpha = 0.01; alpha <= 0.1; alpha += alphaDelta) {
@@ -88,12 +89,13 @@ public class ModelTest {
                     config.setEpochs(epochs);
 
                     Model model = new Model();
-                    double r = model.createAndExecute(config);
-                    if(r > res) {
+                    double r = model.createAndExecute(config, false);
+                    if(r < res) {
                         res = r;
                         bestNu = nu;
                         bestAlpha = alpha;
                         bestEpochs = epochs;
+//                        model.save();
                     }
 
 //                    System.out.printf("\nNU: %f\nALPHA: %f\nEPOCHS: %d\n", nu, alpha, epochs);

@@ -1,6 +1,10 @@
 package com.boi.neronus.data;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DataUtil {
 
@@ -9,6 +13,19 @@ public class DataUtil {
         Collections.shuffle(list);
         list.toArray(data);
         return data;
+    }
+
+    public static void save(String fileName, double[][]data) {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileName))){
+            for(double[]d : data) {
+                String line = Arrays.stream(d).mapToObj(Double::toString).collect(Collectors.joining(","));
+                bw.write(line);
+                bw.write("\n");
+            }
+            bw.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void normalize(double[][] data, double start, double end) {

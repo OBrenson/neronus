@@ -16,12 +16,17 @@ public class PerceptronLayer implements Layer {
 
     private final List<DeepNeurone> neurons;
 
+    private String name;
+
     public PerceptronLayer(int size, ActivationFunction activationFunction, ActivationFunction inverseFunction,
-                           Layer prevLayer) {
+                           Layer prevLayer, String name) {
         neurons = new ArrayList<>(size);
         for(int i = 0; i < size; i++) {
-            neurons.add(NeuronsFactory.createDeepNeurone(prevLayer.getNeurons(), activationFunction, inverseFunction));
+            DeepNeurone dn = NeuronsFactory.createDeepNeurone(prevLayer.getNeurons(), activationFunction, inverseFunction);
+            dn.setName(Integer.toString(i));
+            neurons.add(dn);
         }
+        this.name = name;
     }
 
     public List<DeepNeurone> getNeurons() {
@@ -76,5 +81,9 @@ public class PerceptronLayer implements Layer {
             res.put(neurone, reCalculatedWeights);
         }
         return res;
+    }
+
+    public String getName() {
+        return name;
     }
 }

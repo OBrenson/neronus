@@ -13,7 +13,9 @@ public class FuzzyLayer implements Layer {
 
     private double lastError = 0;
 
-    public FuzzyLayer(int neuronsNum, Layer prevLayer, double m) {
+    private String name;
+
+    public FuzzyLayer(int neuronsNum, Layer prevLayer, double m, String name) {
         this.m = m;
         int size = neuronsNum * prevLayer.getNeurons().size();
         Double[] initC = new Double[size];
@@ -35,14 +37,17 @@ public class FuzzyLayer implements Layer {
         List<Double> list = Arrays.asList(initC);
         Collections.shuffle(list);
         list.toArray(initC);
-        double sum = Arrays.stream(initC).reduce(0.0, Double::sum);
         for(int i = 0; i < neuronsNum; i++) {
             Map<Neuron, Weight> inputSignals = new HashMap<>();
             for(int j = neuronsNum * i; j < neuronsNum + neuronsNum * i; j++) {
                 inputSignals.put(prevLayer.getNeurons().get(j - neuronsNum * i), new Weight(initC[j]));
             }
-            neurones.add(new FuzzyNeurone(inputSignals, null, m));
+            FuzzyNeurone fn = new FuzzyNeurone(inputSignals, null, m);
+            fn.setName(Integer.toString(i));
+            neurones.add(fn);
         }
+
+        this.name = name;
     }
 
     public void feed() throws NoOutputSignal {
@@ -84,5 +89,9 @@ public class FuzzyLayer implements Layer {
     @Override
     public List<FuzzyNeurone> getNeurons() {
         return neurones;
+    }
+
+    public String getName() {
+        return name;
     }
 }

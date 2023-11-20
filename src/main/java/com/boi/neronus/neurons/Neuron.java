@@ -7,4 +7,6 @@ public interface Neuron {
     double getSignal() throws NoOutputSignal;
 
     void setSignal(double signal);
+
+    public String getName();
 }
