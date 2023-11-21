@@ -5,6 +5,26 @@ import java.util.Map;
 
 public class ModelConfig {
 
+    private int perceptronSize;
+
+    public int getPerceptronSize() {
+        return perceptronSize;
+    }
+
+    public void setPerceptronSize(int perceptronSize) {
+        this.perceptronSize = perceptronSize;
+    }
+
+    private int fuzzySize;
+
+    public int getFuzzySize() {
+        return fuzzySize;
+    }
+
+    public void setFuzzySize(int fuzzySize) {
+        this.fuzzySize = fuzzySize;
+    }
+
     private double[][] data;
 
     private int testSize;

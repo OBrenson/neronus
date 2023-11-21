@@ -15,6 +15,11 @@ public class InputNeuron implements Neuron{
         this.outputSignal = outputSignal;
     }
 
+    public InputNeuron(double outputSignal, String name) {
+        this.outputSignal = outputSignal;
+        this.name = name;
+    }
+
     @Override
     public double getSignal() {
         return outputSignal;

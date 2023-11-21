@@ -24,7 +24,7 @@ public class Model {
 
     Map<String,Map<String, List<Double>>> history = new HashMap<>();
 
-    public double createAndExecute(ModelConfig config, boolean isLoad) throws NoOutputSignal {
+    public double createAndExecute(ModelConfig config, boolean isLoad, double[] rmse) throws NoOutputSignal {
 
         double[][] data = config.getData();
 
@@ -37,12 +37,20 @@ public class Model {
         System.arraycopy(data, trainSize, test, 0, testSize);
 
 
-        InputLayer inputLayer = new InputLayer(train[0], 15);
+        InputLayer inputLayer = new InputLayer(train[0], 14);
         Perceptron perceptron = new Perceptron();
 
-        FuzzyLayer fuzzyLayer = new FuzzyLayer(15, inputLayer, 2, "0");
+        int fSize = config.getFuzzySize();
+        if(fSize == 0) {
+            fSize = 14;
+        }
+        FuzzyLayer fuzzyLayer = new FuzzyLayer(fSize, inputLayer, 2, "0");
 
-        PerceptronLayer firstLayer = new PerceptronLayer(5, new Relu(), new InverseRelu(), fuzzyLayer, "1");
+        int pSize = config.getPerceptronSize();
+        if(pSize == 0) {
+            pSize = 7;
+        }
+        PerceptronLayer firstLayer = new PerceptronLayer(pSize, new Relu(), new InverseRelu(), fuzzyLayer, "1");
         PerceptronLayer secondLayer = new PerceptronLayer(3, new Relu(), new InverseRelu(), firstLayer, "2");
         perceptron.addLayer(firstLayer);
         perceptron.addLayer(secondLayer);
@@ -62,9 +70,8 @@ public class Model {
             refs.put(secondLayer.getNeurons().get(i), config.getNormA());
 //            secondLayer.getNeurons().get(i).setName(Integer.toString(i));
         }
-
+        fuzzyLayer.train(config.getBorder(), config.getDifBorder());
         for(int i = 0; i < config.getEpochs(); i++) {
-            int index = 0;
             for (double[] bucket : train) {
                 inputLayer.setSignals( Arrays.copyOfRange(bucket, 1, bucket.length));
                 refs.put(secondLayer.getNeurons().get((int)bucket[0] - 1), 1.0);
@@ -77,13 +84,13 @@ public class Model {
         }
 
         int counter = 0;
-        int[] resCounter = {0,0,0};
-        int[] example = {0,0,0};
+        double[] resCounter = {0,0,0};
+        double[] example = {0,0,0};
 
         double sum = 0;
-        for(double[] bucket : test) {
-            resCounter = new int[]{0,0,0};
-            example = new int[]{0,0,0};
+        for(double[] bucket : train) {
+            resCounter = new double[]{0,0,0};
+            example = new double[]{0,0,0};
 
             inputLayer.setSignals( Arrays.copyOfRange(bucket, 1, bucket.length));
             fuzzyLayer.feed();
@@ -104,7 +111,7 @@ public class Model {
             resCounter[maxI] = 1;
             normalize(res);
             for(int i = 0; i < secondLayer.getNeurons().size(); i++) {
-                sum += Math.pow(resCounter[i] - example[i], 2);
+                sum += Math.sqrt(Math.pow(res[i] - example[i], 2));
             }
 
             if (winner.equals(config.getPam().get((int)bucket[0] - 1))) {
@@ -112,11 +119,50 @@ public class Model {
             }
         }
 
-        double res = Math.sqrt(sum / (test.length * secondLayer.getNeurons().size() - 1.0));
+        double trainRes = sum / (train.length * secondLayer.getNeurons().size() - 1.0);
         System.out.println(Arrays.toString(resCounter));
-        System.out.printf("Result: %d / %d; %f ", counter, test.length, res);
+        System.out.printf("Result: %d / %d; %f ", counter, train.length, trainRes);
 
-        return res;
+        rmse[0] = trainRes;
+        counter = 0;
+        sum = 0;
+        for(double[] bucket : test) {
+            resCounter = new double[]{0,0,0};
+            example = new double[]{0,0,0};
+
+            inputLayer.setSignals( Arrays.copyOfRange(bucket, 1, bucket.length));
+            fuzzyLayer.feed();
+            double[] res = perceptron.feed();
+
+            example[(int)bucket[0] - 1] = 1;
+
+            double max = -1000000;
+            int maxI = -1;
+            String winner = null;
+            for (int i = 0; i < res.length; i++) {
+                if (res[i] > max) {
+                    max = res[i];
+                    maxI = i;
+                    winner = config.getPam().get(i);
+                }
+            }
+            resCounter[maxI] = 1;
+            normalize(res);
+            for(int i = 0; i < secondLayer.getNeurons().size(); i++) {
+                sum += Math.sqrt(Math.pow(res[i] - example[i], 2));
+            }
+
+            if (winner.equals(config.getPam().get((int)bucket[0] - 1))) {
+                counter++;
+            }
+        }
+
+        double testRes = sum / (test.length * secondLayer.getNeurons().size() - 1.0);
+        System.out.println(Arrays.toString(resCounter));
+        System.out.printf("Result: %d / %d; %f ", counter, test.length, testRes);
+
+        rmse[1] = testRes;
+        return testRes;
     }
 
     public void save() {

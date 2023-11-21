@@ -34,6 +34,9 @@ public interface Layer {
                     weights.put(ne.getKey().getName(), ne.getValue());
                 }
                 List<Double> doubles = doubleMap.get(n.getName());
+                if(doubles == null) {
+                    break;
+                }
                 for(int i = 0; i < weights.size(); i++) {
                     weights.get(Integer.toString(i)).setValue(doubles.get(i));
                 }

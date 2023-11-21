@@ -35,6 +35,7 @@ public class NeuronsFactory {
             res.put(neuron, new Weight(w));
 //            System.out.println(w);
         }
+//        res.put(new InputNeuron(1.0, Integer.toString(inputs.size())), new Weight(a + random.nextDouble() * (b - a)));
         return res;
     }
 }
