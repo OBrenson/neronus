@@ -45,12 +45,12 @@ public class ModelTest {
         config.setNormB(1);
         config.setTrainSize(50);
         config.setTestSize(128);
-        config.setBorder(0.001);
+        config.setBorder(0.00001);
         config.setDifBorder(0.00001);
         config.setNu(0.3);
-        config.setAlpha(0.06);
+        config.setAlpha(0.01);
         DataUtil.normalize(data, config.getNormA(), config.getNormB());
-        config.setEpochs(5);
+        config.setEpochs(8);
 
         List<String> pam = new ArrayList<>();
         for(int i = 0; i < 3; i++) {
@@ -59,7 +59,11 @@ public class ModelTest {
         config.setPam(pam);
 
         Model model = new Model();
-        System.out.println(model.createAndExecute(config, true, new double[]{0,0}));
+        double[] res = {0,10};
+        while (res[1] > 0.13) {
+            model.createAndExecute(config, false, res);
+            System.out.printf("\nTRAIN RMSE: %f; TEST RMSE: %f;", res[0], res[1]);
+        }
     }
 
     @Test
